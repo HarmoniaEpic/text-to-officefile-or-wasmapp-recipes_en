@@ -904,6 +904,7 @@ We strongly recommend using Ollama/Jan for highly confidential documents.
 **A:** It can take time to initialize the Python runtime and/or WASM runtime in the browser.
 </details>
 
+---
 
 ### 🤝 Forks Welcome
 
