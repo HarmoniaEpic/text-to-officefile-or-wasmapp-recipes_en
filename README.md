@@ -1,6 +1,6 @@
 # Preface
 ## 👉Download Here👈
-**[👉Download ZIP file👈](https://github.com/HarmoniaEpic/text-to-office-recipes/archive/refs/heads/main.zip)**
+**[👉Download ZIP file👈](https://github.com/HarmoniaEpic/text-to-officefile-or-wasmapp-recipes_en/archive/refs/heads/main.zip)**
 ## 💣Caution! This product is still PoC!💣
 ## 🚽Please flush away any complaints as this is a proof of concept🚽
 ## What is this?
@@ -224,7 +224,7 @@ Please create a Pong clone that meets the following requirements:
 # Download from GitHub
 git clone https://github.com/HarmoniaEpic/text-to-office-recipes.git
 ```
-Or [download ZIP file](https://github.com/HarmoniaEpic/text-to-office-recipes/archive/refs/heads/main.zip)
+Or [download ZIP file](https://github.com/HarmoniaEpic/text-to-officefile-or-wasmapp-recipes_en/archive/refs/heads/main.zip)
 
 #### 2️⃣ **Choose a recipe and attach to AI**
 ```
