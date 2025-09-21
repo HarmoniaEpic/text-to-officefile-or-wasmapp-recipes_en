@@ -11,7 +11,7 @@ This repository is the result of shaping the above idea to a working stage using
 We plan to make careful corrections with human review once the operation stabilizes.
 
 <details>
-<summary><b>Memo + Something like complaints</b></summary>
+<summary><b>Memo + A few grumbles</b></summary>
 
 - First of all, we need to fix the hyperbolic writing style. Lies, exaggerations, and misleading content are not good.
 - Another point is the need to remove duplicate code. It seems that having AI repeatedly modify code causes strange fragments to accumulate.
@@ -30,6 +30,8 @@ We plan to make careful corrections with human review once the operation stabili
 Contrary to the description in AI-generated text, when actually tested, recipes consistently failed to execute on models running on video cards with 16GB VRAM. It seems that model size is an important limiting factor in addition to context window length.
 <br><br>
 We're considering verifying this on Colab etc. in the future. It might take time, but inferencing heavyweight models on CPU might also work. Other possibilities include Apple Silicon Macs.
+
+→ It looks promising. With CPU execution, **gpt-oss:20b** produced outputs close to correct. **qwen2.5-coder:32b**, or models with larger parameter counts, are likely to handle more complex recipes.
 ## Process Flow Comparison with Docker
 ###### 📄 Recipe System Flow
 ```mermaid
@@ -104,14 +106,20 @@ Office-type document files & WASM-compatible standalone HTML web app generation 
 - [Features](#-features)
 - [Demo](#-demo)
 - [Quick Start](#-quick-start)
+- [Latest Version](#-latest-version)
 - [Types of Files You Can Create](#-types-of-files-you-can-create)
 - [How to Use](#-how-to-use)
 - [Technical Specifications](#-technical-specifications)
 - [Security and Privacy](#-security-and-privacy)
 - [Use Cases](#-use-cases)
 - [Frequently Asked Questions](#-frequently-asked-questions)
+- [Forks Welcome](#-forks-welcome)
 - [Update History](#-update-history)
+- [Supported Environments](#-supported-environments)
+- [Troubleshooting](#-troubleshooting)
+- [Community](#-community)
 - [License](#-license)
+- [Acknowledgments](#-acknowledgments)
 
 ---
 ## ✨ Features
@@ -136,8 +144,7 @@ Office-type document files & WASM-compatible standalone HTML web app generation 
 - **Default is text-only** - Simple and lightweight documents
 - **Placeholder placement with explicit instructions** - Only when instructing "place images" etc.
 - **Add images later freely** - Insert actual images after generation
-
-### 🧮 **Assembly Script**
+### 🧮 **AssemblyScript**
 - **WASM** - Near-native app operating speed
 - **In-browser execution** - Works anywhere
 - **High design freedom** - Create anything
@@ -146,25 +153,29 @@ Office-type document files & WASM-compatible standalone HTML web app generation 
 
 ## 🎬 Demo
 ### Claude
+"Create a 5-slide sales report presentation for the Demon King's army."
 - [Presentation download HTML](examples/maougun_reportgenerator_claude.html)
 - [Generated presentation](examples/maougun_report_claude.pptx)
 <br><br>
 ![Claude](examples/screenshot_claude.png)
 ### ChatGPT
+"Create a 5-slide sales report presentation for the Demon King's army."
 - [Presentation download HTML](examples/maougun_reportgenerator_chatgpt.html)
 - [Generated presentation](examples/maougun_report_chatgpt.pptx)
 <br><br>
 ![ChatGPT](examples/screenshot_chatgpt.png)
 ### Gemini
+"Create a 5-slide sales report presentation for the Demon King's army."
 - [Presentation download HTML](examples/maougun_reportgenerator_gemini.html)
 - [Generated presentation](examples/maougun_report_gemini.pptx)
 <br><br>
-![Claude](examples/screenshot_gemini.png)
+![Gemini](examples/screenshot_gemini.png)
 ### Perplexity
+"Create a 5-slide sales report presentation for the Demon King's army."
 - [Presentation download HTML](examples/maougun_reportgenerator_perplexity.html)
 - [Generated presentation](examples/maougun_report_perplexity.pptx)
 <br><br>
-![Claude](examples/screenshot_perplexity.png)
+![Perplexity](examples/screenshot_perplexity.png)
 ### WASM App
 #### "Create a Counter Demo"
 [Generated counter demo HTML file](examples/assemblyscript-counter-demo.html)
@@ -195,24 +206,6 @@ Please create a Pong clone that meets the following requirements:
 - Responsive support
 ```
 
-### Basic Usage
-```
-1. Select a recipe file (e.g., PPTX-RECIPE.md)
-2. Attach to AI
-3. Request "Create a 5-slide sales report presentation"
-4. Download generated HTML → Open → Get PPTX!
-```
-
-### Operation Image
-- **PowerPoint generation**: Presentations, proposals, reports (images are optional)
-- **Word generation**: Contracts, manuals, reports (images are optional)
-- **Excel generation**: Sales tables, budget management, data analysis (CSV compatible)
-- **PDF generation**: Invoices, certificates, printed materials
-- **Math PNG generation**: Mathematical symbols, equations, scientific formulas as images
-- **WASM-optimized web app generation**: Web apps requiring high-speed responsiveness (games, data processing, scientific calculations, etc.)
-
----
-
 ## 🚀 Quick Start
 
 ### Requirements
@@ -220,7 +213,7 @@ Please create a Pong clone that meets the following requirements:
 - Recipe files (included in this project)
 - AI assistant (choose from):
   - **Privacy-focused**: [Ollama](https://ollama.ai/), [Jan](https://jan.ai/), [Docker Model Runner](https://www.docker.com/ja-jp/blog/introducing-docker-model-runner/), [LM Studio](https://lmstudio.ai/) etc. (local AI)
-  - **Convenience-focused**: [Claude](https://claude.ai/), [ChatGPT](https://chatgpt.com/), [Gemini](https://https://gemini.google.com/), [Perplexity](https://www.perplexity.ai/) etc. (cloud AI)
+  - **Convenience-focused**: [Claude](https://claude.ai/), [ChatGPT](https://chatgpt.com/), [Gemini](https://gemini.google.com/), [Perplexity](https://www.perplexity.ai/) etc. (cloud AI)
 <br>
 ※ The claim that recipes can run on consumer GPUs seems to be hallucination.
 
@@ -370,7 +363,28 @@ graph LR
 | Tables, Graphs | Excel Recipe | `XLSX-RECIPE.md` | CSV File (Optional) |
 | Invoices, Certificates | PDF Recipe | `PDF-RECIPE.md` | Not Required |
 | Formulas, Math Symbols | Math PNG Recipe | `Math-RECIPE.md` | Not Required |
-| WASM-Optimized Web App | Web App Recipe | `ASMSCRIPT-OPTIMIZER-RECIPE.md` | `ASMSCRIPT-OPTIMIZER-RECIPE-HTMLTEMPLATE.md` |
+| WASM-Optimized Web App | Web App Recipe | `ASMSCRIPT-OPTIMIZER-
+### Basic Usage
+```
+1. Select a recipe file (e.g., PPTX-RECIPE.md)
+2. Attach to AI
+3. Request "Create a 5-slide sales report presentation"
+4. Download generated HTML → Open → Get PPTX!
+```
+
+
+
+### Operation Image
+- **PowerPoint generation**: Presentations, proposals, reports (images are optional)
+- **Word generation**: Contracts, manuals, reports (images are optional)
+- **Excel generation**: Sales tables, budget management, data analysis (CSV compatible)
+- **PDF generation**: Invoices, certificates, printed materials
+- **Math PNG generation**: Mathematical symbols, equations, scientific formulas as images
+- **WASM-optimized web app generation**: Web apps requiring high-speed responsiveness (games, data processing, scientific calculations, etc.)
+
+---
+
+
 
 ### 💬 AI Request Examples (Copy-Paste OK)
 
@@ -531,6 +545,8 @@ flowchart TD
 | **Storage** | 100MB (for cache) | 500MB or more |
 
 ### System Requirements (When Using Local AI)
+⚠️ The following AI-generated section was hallucinating. Based on actual measurements, models with **20B parameters or more** are required for correct interpretation of the recipes. ⚠️
+
 
 #### 📊 **Hardware Requirements**
 
@@ -904,9 +920,8 @@ We strongly recommend using Ollama/Jan for highly confidential documents.
 **A:** It can take time to initialize the Python runtime and/or WASM runtime in the browser.
 </details>
 
----
 
-### 🤝 Forks Welcome
+## 🤝 Forks Welcome
 
 Forks of this project are welcome!
 
