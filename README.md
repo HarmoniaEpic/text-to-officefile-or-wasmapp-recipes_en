@@ -31,7 +31,7 @@ Contrary to the description in AI-generated text, when actually tested, recipes 
 <br><br>
 We're considering verifying this on Colab etc. in the future. It might take time, but inferencing heavyweight models on CPU might also work. Other possibilities include Apple Silicon Macs.
 
-→ It looks promising. With CPU execution, **gpt-oss:20b** produced outputs close to correct. **qwen2.5-coder:32b**, or models with larger parameter counts, are likely to handle more complex recipes.
+-> It looks promising. With CPU execution, **gpt-oss:20b** produced outputs close to correct. **qwen2.5-coder:32b**, or models with larger parameter counts, are likely to handle more complex recipes.
 ## Process Flow Comparison with Docker
 ###### 📄 Recipe System Flow
 ```mermaid
@@ -70,7 +70,7 @@ graph LR
 | Aspect | Recipe System | Docker |
 |------|--------------|---------|
 | **Recipe File** | MD File (Markdown) | Dockerfile (Dedicated DSL) |
-| **Execution Process** | AI → HTML → Browser → WASM | Build → Image → Container |
+| **Execution Process** | AI -> HTML -> Browser -> WASM | Build -> Image -> Container |
 | **Execution Location** | Client (Browser) | Server/Local (OS) |
 | **Processing Engine** | WebAssembly (Pyodide/AssemblyScript) | Native Process |
 | **Distribution Unit** | Single HTML File | Container Image |
@@ -125,7 +125,7 @@ Office-type document files & WASM-compatible standalone HTML web app generation 
 ## ✨ Features
 
 ### 🚀 **Easy & Fast**
-- **Complete in 4 steps** - Select recipe → Attach AI → Instruct → Download
+- **Complete in 4 steps** - Select recipe -> Attach AI -> Instruct -> Download
 - **Processing time about 10 seconds** - Fast document generation
 - **No programming knowledge required** - Anyone can use it
 
@@ -228,12 +228,12 @@ Or [download ZIP file](https://github.com/HarmoniaEpic/text-to-officefile-or-was
 
 #### 2️⃣ **Choose a recipe and attach to AI**
 ```
-PowerPoint → PPTX-RECIPE.md
-Word → DOCX-RECIPE.md
-Excel → XLSX-RECIPE.md
-PDF → PDF-RECIPE.md
-Math PNG → Math-RECIPE.md
-WASM Web App → ASMSCRIPT-OPTIMIZER-RECIPE.md
+PowerPoint -> PPTX-RECIPE.md
+Word -> DOCX-RECIPE.md
+Excel -> XLSX-RECIPE.md
+PDF -> PDF-RECIPE.md
+Math PNG -> Math-RECIPE.md
+WASM Web App -> ASMSCRIPT-OPTIMIZER-RECIPE.md
               + ASMSCRIPT-OPTIMIZER-RECIPE-HTMLTEMPLATE.md
 ```
 
@@ -243,7 +243,7 @@ WASM Web App → ASMSCRIPT-OPTIMIZER-RECIPE.md
 ```
 
 #### 4️⃣ **Download**
-Save the generated HTML → Open in browser → Click download button!
+Save the generated HTML -> Open in browser -> Click download button!
 
 ### Start with Advanced Privacy Protection (Using Ollama)
 ※ The claim that recipes described in this repository can run on consumer GPUs seems to be hallucination. ※
@@ -369,7 +369,7 @@ graph LR
 1. Select a recipe file (e.g., PPTX-RECIPE.md)
 2. Attach to AI
 3. Request "Create a 5-slide sales report presentation"
-4. Download generated HTML → Open → Get PPTX!
+4. Download generated HTML -> Open -> Get PPTX!
 ```
 
 
@@ -692,20 +692,20 @@ This system has different security and privacy levels depending on the AI used.
 #### 🔐 **Data Flow When Using Ollama/Jan**
 ```
 Local Processing:
-1. Recipe file → Local AI (Ollama/Jan) ✅ Local
-2. HTML generation → Completed locally ✅ Local
-3. Browser execution → WebAssembly processing ✅ Local
-4. File generation → Local download ✅ Local
+1. Recipe file -> Local AI (Ollama/Jan) ✅ Local
+2. HTML generation -> Completed locally ✅ Local
+3. Browser execution -> WebAssembly processing ✅ Local
+4. File generation -> Local download ✅ Local
 ※ No external communication at all (except CDN)
 ```
 
 #### ☁️ **Data Flow When Using Claude/ChatGPT**
 ```
 Hybrid Processing:
-1. Recipe file → Cloud AI ⚠️ External transmission
-2. HTML generation → Received from AI ⚠️ External communication
-3. Browser execution → WebAssembly processing ✅ Local
-4. File generation → Local download ✅ Local
+1. Recipe file -> Cloud AI ⚠️ External transmission
+2. HTML generation -> Received from AI ⚠️ External communication
+3. Browser execution -> WebAssembly processing ✅ Local
+4. File generation -> Local download ✅ Local
 ```
 
 ### Recommended Usage
@@ -793,8 +793,8 @@ ollama serve
 | Retro games | "Create a Breakout clone" | WASMAPP | Claude/ChatGPT |
 
 **🔐 Security guideline**:
-- Contains personal/confidential information → **Ollama/Jan**
-- General content/templates → **Claude/ChatGPT**
+- Contains personal/confidential information -> **Ollama/Jan**
+- General content/templates -> **Claude/ChatGPT**
 
 ---
 
