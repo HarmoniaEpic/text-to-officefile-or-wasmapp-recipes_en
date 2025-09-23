@@ -203,7 +203,7 @@ Please create a Pong clone that meets the following requirements:
 - Single user mode
 - 2-user battle mode
 - Compatible with keyboard and joystick
-- Retro opening screen and single/two-player selection screen, with 8-bit sound effects & BGM
+- Retro opening screen and single/two-player selection screen, with 8-bit sound effects & background music
 - Responsive support
 ```
 
@@ -454,7 +454,7 @@ Please create a Pong clone that meets the following requirements:
 - Single user mode
 - 2-user battle mode
 - Keyboard and joystick support
-- Retro opening screen with single/two-player selection, and 8-bit style sound effects & BGM
+- Retro opening screen with single/two-player selection, and 8-bit style sound effects & background music
 - Responsive support
 ```
 
