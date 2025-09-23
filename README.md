@@ -92,7 +92,7 @@ This recipe system has the following characteristics:
 <br>
 - Realizes on the browser side what Docker does on the server side
 - Constructs solutions on the browser by instructing AI what you want to do in natural language
-- Literally provides AI with a sandbox
+- Literally provides AI with a “sandbox”
 <br>
 The above three points are its characteristics. Functions that cannot be realized by AI alone can be achieved by simply outputting HTML based on the premise of building a development environment on the browser sandbox using Pyodide, AssemblyScript, etc., making it an extremely easy and flexible means of expanding AI functionality. As more things become possible with WASI and WASI Sockets, with some ingenuity, it might become possible to have AI design and create an MCP server for a specific purpose on the browser and use it via a proxy server. "Computer Use Anywhere" might not be a dream.
 
