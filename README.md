@@ -28,7 +28,7 @@ We plan to make careful corrections with human review once the operation stabili
 
 </details>
 
-## What we can do now
+## What we can do now with our current recipe
 ### Browser Sandbox + Python (using Pyodide)
 - Generation of Office files (docx, xlsx, pptx, pdf)
 - Generation of mathematical formula PNG images (TeX-style mathematical formulas using matplotlib)
