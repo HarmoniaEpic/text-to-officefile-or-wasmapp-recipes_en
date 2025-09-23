@@ -364,7 +364,7 @@ graph LR
 | Tables, Graphs | Excel Recipe | `XLSX-RECIPE.md` | CSV File (Optional) |
 | Invoices, Certificates | PDF Recipe | `PDF-RECIPE.md` | Not Required |
 | Formulas, Math Symbols | Math PNG Recipe | `Math-RECIPE.md` | Not Required |
-| WASM-Optimized Web App | Web App Recipe | `ASMSCRIPT-OPTIMIZER-
+| WASM-Optimized Web App | Web App Recipe | `ASMSCRIPT-OPTIMIZER-RECIPE.md` | `ASMSCRIPT-OPTIMIZER-RECIPE-HTMLTEMPLATE.md` | 
 ### Basic Usage
 ```
 1. Select a recipe file (e.g., PPTX-RECIPE.md)
