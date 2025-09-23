@@ -153,25 +153,25 @@ Office-type document files & WASM-compatible standalone HTML web app generation 
 
 ## 🎬 Demo
 ### Claude
-"Create a 5-slide sales report presentation for the Galactic Empire's army."
+"Create a 5-slide sales report presentation for the Dark Lord of the Galactic Empire."
 - [Presentation download HTML](examples/maougun_reportgenerator_claude.html)
 - [Generated presentation](examples/maougun_report_claude.pptx)
 <br><br>
 ![Claude](examples/screenshot_claude.png)
 ### ChatGPT
-"Create a 5-slide sales report presentation for the Galactic Empire's army."
+"Create a 5-slide sales report presentation for the Dark Lord of the Galactic Empire."
 - [Presentation download HTML](examples/maougun_reportgenerator_chatgpt.html)
 - [Generated presentation](examples/maougun_report_chatgpt.pptx)
 <br><br>
 ![ChatGPT](examples/screenshot_chatgpt.png)
 ### Gemini
-"Create a 5-slide sales report presentation for the Galactic Empire's army."
+"Create a 5-slide sales report presentation for the Dark Lord of the Galactic Empire."
 - [Presentation download HTML](examples/maougun_reportgenerator_gemini.html)
 - [Generated presentation](examples/maougun_report_gemini.pptx)
 <br><br>
 ![Gemini](examples/screenshot_gemini.png)
 ### Perplexity
-"Create a 5-slide sales report presentation for the Galactic Empire's army."
+"Create a 5-slide sales report presentation for the Dark Lord of the Galactic Empire."
 - [Presentation download HTML](examples/maougun_reportgenerator_perplexity.html)
 - [Generated presentation](examples/maougun_report_perplexity.pptx)
 <br><br>
