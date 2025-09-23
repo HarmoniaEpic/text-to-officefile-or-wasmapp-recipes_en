@@ -178,20 +178,20 @@ Office-type document files & WASM-compatible standalone HTML web app generation 
 <br><br>
 ![Perplexity](examples/screenshot_perplexity.png)
 ### With [WASM App RECIPE](ASMSCRIPT-OPTIMIZER-RECIPE.md) & [TEMPLATE](ASMSCRIPT-OPTIMIZER-RECIPE-HTMLTEMPLATE.md)
-#### "Create a Counter Demo"
+#### "Create a Counter Demo, based on the attached recipe."
 [Generated counter demo HTML file](examples/assemblyscript-counter-demo.html)
 <BR><BR>
 ![assemblyscript-counter-demo](examples/assemblyscript-counter-demo.jpeg)
-#### "Create a Ball Physics Demo"
+#### "Create a Ball Physics Demo, based on the attached recipe."
 [Generated ball physics demo HTML file](examples/assemblyscript-ball-physics-demo.html)
 <BR><BR>
 ![assemblyscript-ball-physics-demo](examples/assemblyscript-ball-physics-demo.jpeg)
-#### "Create an Image Filter Processor"
+#### "Create an Image Filter Processor, based on the attached recipe."
 [Generated image filter demo HTML file](examples/assemblyscript-image-filter-processor.html)
 <BR><BR>
 ![assemblyscript-image-filter-processor.jpeg](examples/assemblyscript-image-filter-processor.jpeg)
 
-#### "Create a knockoff of Pong"
+#### "Create a knockoff of Pong, based on the attached recipe."
 [Generated game HTML file](examples/pongu-championship.html)
 <BR><BR>
 ![pongu-championship](examples/pongu-championship.jpeg)
