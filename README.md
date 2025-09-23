@@ -160,7 +160,7 @@ Office-type document files & WASM-compatible standalone HTML web app generation 
 ---
 
 ## 🎬 Demo
-### With PPTX RECIPE
+### With [PPTX RECIPE](PPTX-RECIPE.md)
 #### Claude
 "Create an HTML download page for a 5-slide sales report presentation for the Dark Lord of the Galactic Empire, based on the attached recipe."
 <br><br>
