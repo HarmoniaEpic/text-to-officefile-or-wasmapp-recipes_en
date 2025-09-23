@@ -215,8 +215,8 @@ USER Request:
       <section class="card" id="sec-links">
       <h2>Reference Links</h2>
       <ul>
-        <li><a href="https://developer.mozilla.org/en-US/docs/WebAssembly/Guides/Concepts" target="_blank" rel="noopener">WebAssembly Overview - WebAssembly | MDN</a></li>
-        <li><a href="https://developer.mozilla.org/en-US/docs/WebAssembly/Guides/Text_format_to_Wasm" target="_blank" rel="noopener">Converting WebAssembly text format to Wasm - WebAssembly | MDN</a></li>
+        <li><a href="https://developer.mozilla.org/en-US/docs/WebAssembly/Guides/Concepts" target="_blank" rel="noopener">WebAssembly concepts - WebAssembly | MDN</a></li>
+        <li><a href="https://developer.mozilla.org/en-US/docs/WebAssembly/Guides/Text_format_to_Wasm" target="_blank" rel="noopener">Converting WebAssembly text format to binary - WebAssembly | MDN</a></li>
       </ul>
     </section>
   </main>
