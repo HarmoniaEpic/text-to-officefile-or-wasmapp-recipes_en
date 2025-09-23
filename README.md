@@ -163,26 +163,18 @@ Office-type document files & WASM-compatible standalone HTML web app generation 
 ### With PPTX RECIPE
 #### Claude
 "Create an HTML download page for a 5-slide sales report presentation for the Dark Lord of the Galactic Empire, based on the attached recipe."
-- [Presentation download HTML](examples/maougun_reportgenerator_claude.html)
-- [Generated presentation](examples/maougun_report_claude.pptx)
 <br><br>
 ![Claude](examples/screenshot_claude.png)
 #### ChatGPT
 "Create an HTML download page for a 5-slide sales report presentation for the Dark Lord of the Galactic Empire, based on the attached recipe."
-- [Presentation download HTML](examples/maougun_reportgenerator_chatgpt.html)
-- [Generated presentation](examples/maougun_report_chatgpt.pptx)
 <br><br>
 ![ChatGPT](examples/screenshot_chatgpt.png)
 #### Gemini
 "Create an HTML download page for a 5-slide sales report presentation for the Dark Lord of the Galactic Empire, based on the attached recipe."
-- [Presentation download HTML](examples/maougun_reportgenerator_gemini.html)
-- [Generated presentation](examples/maougun_report_gemini.pptx)
 <br><br>
 ![Gemini](examples/screenshot_gemini.png)
 #### Perplexity
 "Create an HTML download page for a 5-slide sales report presentation for the Dark Lord of the Galactic Empire, based on the attached recipe."
-- [Presentation download HTML](examples/maougun_reportgenerator_perplexity.html)
-- [Generated presentation](examples/maougun_report_perplexity.pptx)
 <br><br>
 ![Perplexity](examples/screenshot_perplexity.png)
 ### With WASM App RECIPE & TEMPLATE
