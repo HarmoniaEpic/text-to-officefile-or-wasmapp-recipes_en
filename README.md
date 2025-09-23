@@ -177,7 +177,7 @@ Office-type document files & WASM-compatible standalone HTML web app generation 
 "Create an HTML download page for a 5-slide sales report presentation for the Dark Lord of the Galactic Empire, based on the attached recipe."
 <br><br>
 ![Perplexity](examples/screenshot_perplexity.png)
-### With WASM App RECIPE & TEMPLATE
+### With [WASM App RECIPE](ASMSCRIPT-OPTIMIZER-RECIPE.md) & [TEMPLATE](ASMSCRIPT-OPTIMIZER-RECIPE-HTMLTEMPLATE.md)
 #### "Create a Counter Demo"
 [Generated counter demo HTML file](examples/assemblyscript-counter-demo.html)
 <BR><BR>
