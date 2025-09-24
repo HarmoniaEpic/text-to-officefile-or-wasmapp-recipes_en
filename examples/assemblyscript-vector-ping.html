@@ -1,0 +1,2034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AssemblyScript WebAssembly App</title>
+    
+    <style>
+        /* ============================================
+           CSS Variable Definitions (Theme System)
+        ============================================ */
+        :root {
+            /* Light Theme (Default) */
+            --bg-primary: #f5f7fa;
+            --bg-secondary: white;
+            --bg-tertiary: #f9fafb;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --border-color: #e5e7eb;
+            --header-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --header-text: white;
+            --sidebar-bg: white;
+            --code-bg: #1e1e1e;
+            --code-text: #e5e7eb;
+            --success-color: #4ade80;
+            --error-color: #dc3545;
+            --warning-color: #ffc107;
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+        }
+        
+        /* Dark Theme */
+        :root[data-theme="dark"] {
+            --bg-primary: #1a202c;
+            --bg-secondary: #2d3748;
+            --bg-tertiary: #4a5568;
+            --text-primary: #e2e8f0;
+            --text-secondary: #a0aec0;
+            --border-color: #4a5568;
+            --sidebar-bg: #2d3748;
+            --code-bg: #1e1e1e;
+            --code-text: #e5e7eb;
+        }
+        
+        /* System Theme (Dark Mode Support) */
+        @media (prefers-color-scheme: dark) {
+            :root[data-theme="system"] {
+                --bg-primary: #1a202c;
+                --bg-secondary: #2d3748;
+                --bg-tertiary: #4a5568;
+                --text-primary: #e2e8f0;
+                --text-secondary: #a0aec0;
+                --border-color: #4a5568;
+                --sidebar-bg: #2d3748;
+                --code-bg: #1e1e1e;
+                --code-text: #e5e7eb;
+            }
+        }
+        
+        /* ============================================
+           Global Styles
+        ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        /* ============================================
+           Header
+        ============================================ */
+        .header {
+            background: var(--header-bg);
+            color: var(--header-text);
+            padding: 0;
+            display: flex;
+            align-items: center;
+            height: 56px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .hamburger {
+            width: 56px;
+            height: 56px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .hamburger:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .hamburger span {
+            width: 24px;
+            height: 2px;
+            background: white;
+            margin: 3px 0;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+        
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+        
+        .header-content {
+            flex: 1;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .header-title {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header-title h1 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .header-title p {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-top: 2px;
+        }
+        
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .header-select {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .header-select:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .header-select option {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.2);
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 13px;
+        }
+        
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--success-color);
+            animation: pulse 2s infinite;
+        }
+        
+        .status-dot.loading {
+            background: var(--warning-color);
+        }
+        
+        .status-dot.error {
+            background: var(--error-color);
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* ============================================
+           Side Menu
+        ============================================ */
+        .side-menu {
+            position: fixed;
+            top: 56px;
+            left: -320px;
+            width: 320px;
+            height: calc(100vh - 56px);
+            background: var(--sidebar-bg);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            transition: left 0.3s;
+            z-index: 999;
+            overflow-y: auto;
+        }
+        
+        .side-menu.active {
+            left: 0;
+        }
+        
+        /* Tab Navigation */
+        .tab-navigation {
+            display: flex;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .tab-button {
+            flex: 1;
+            padding: 14px;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        
+        .tab-button:hover {
+            background: rgba(0,0,0,0.03);
+        }
+        
+        .tab-button.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+            background: var(--bg-secondary);
+        }
+        
+        .tab-icon {
+            font-size: 16px;
+        }
+        
+        .tab-content {
+            display: none;
+            height: calc(100vh - 56px - 48px);
+            overflow-y: auto;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .menu-section {
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .menu-header {
+            padding: 16px 20px;
+            background: var(--bg-tertiary);
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background: #e5e7eb;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .toggle-switch.active {
+            background: var(--primary-color);
+        }
+        
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .toggle-switch.active::after {
+            left: 22px;
+        }
+        
+        .menu-content {
+            padding: 16px;
+        }
+        
+        .presets {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .preset-btn {
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .preset-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .option-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            gap: 10px;
+        }
+        
+        .option-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+        }
+        
+        .option-item label {
+            flex: 1;
+            font-size: 13px;
+            color: var(--text-primary);
+        }
+        
+        .option-item select {
+            padding: 4px 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 12px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+        
+        .code-viewer {
+            background: var(--code-bg);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 8px;
+        }
+        
+        .code-header {
+            color: #9ca3af;
+            font-size: 11px;
+            margin-bottom: 12px;
+            font-family: monospace;
+            text-transform: uppercase;
+        }
+        
+        .code-content {
+            color: var(--code-text);
+            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            white-space: pre;
+            overflow-x: auto;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        /* ============================================
+           Main Content
+        ============================================ */
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            transition: margin-left 0.3s;
+        }
+        
+        .main-container.menu-open {
+            margin-left: 320px;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 24px;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        /* Workspace */
+        .workspace {
+            display: flex;
+            gap: 20px;
+            flex: 1;
+        }
+        
+        .workspace.single-column {
+            justify-content: center;
+        }
+        
+        .workspace-panel {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .workspace-panel.code-panel {
+            flex: 1;
+            max-width: 50%;
+        }
+        
+        .workspace-panel.app-panel {
+            flex: 1;
+        }
+        
+        .workspace.single-column .app-panel {
+            max-width: 1000px;
+            width: 100%;
+        }
+        
+        .panel-header {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .source-code-display {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 16px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            overflow: auto;
+            flex: 1;
+            white-space: pre;
+        }
+        
+        .app-viewport {
+            border-radius: 8px;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            padding: 0; /* Remove padding for canvas */
+            overflow: hidden; /* Hide anything outside canvas */
+        }
+        
+        .app-viewport canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: -webkit-crisp-edges;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+        
+        
+        :root[data-theme="dark"] .app-viewport,
+        :root[data-theme="system"] .app-viewport {
+            background: var(--bg-tertiary);
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* v1.4.2: Button emphasis on option change */
+        .btn-primary.options-changed {
+            background: linear-gradient(45deg, #f59e0b, #ef4444);
+            animation: pulse-attention 1.5s ease-in-out infinite;
+            font-weight: 600;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+        }
+        
+        .btn-primary.options-changed:hover {
+            background: linear-gradient(45deg, #dc2626, #ea580c);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+        }
+        
+        @keyframes pulse-attention {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.02);
+            }
+        }
+        
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--bg-primary);
+        }
+        
+        /* Status Bar (Bottom) */
+        .status-bar {
+            position: fixed;
+            bottom: -48px;
+            left: 0;
+            right: 0;
+            height: 48px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            transition: bottom 0.3s, left 0.3s;
+            z-index: 998;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .status-bar.active {
+            bottom: 0;
+        }
+        
+        .status-bar.menu-open {
+            left: 320px;
+        }
+        
+        .stats-grid {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        .stat-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 56px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 998;
+        }
+        
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Error Overlay */
+        .error-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+        }
+        
+        .error-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .error-title {
+            color: var(--error-color);
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .error-content {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 16px;
+            font-family: monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 16px;
+            white-space: pre-wrap;
+            word-break: break-word;
+            color: var(--text-primary);
+        }
+        
+        .error-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+        
+        .error-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .error-btn:hover {
+            background: var(--bg-tertiary);
+        }
+        
+        .error-btn-primary {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .error-btn-primary:hover {
+            background: #5a67d8;
+        }
+        
+        /* Progress Bar */
+        .progress-container {
+            height: 4px;
+            background: #e9ecef;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-container.loading .progress-bar {
+            animation: progress-indeterminate 1.5s infinite;
+        }
+        
+        @keyframes progress-indeterminate {
+            0% {
+                width: 0%;
+                margin-left: 0%;
+            }
+            50% {
+                width: 30%;
+                margin-left: 70%;
+            }
+            100% {
+                width: 0%;
+                margin-left: 100%;
+            }
+        }
+        
+        /* Compiler Info Panel */
+        .compiler-info {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-family: monospace;
+            display: none;
+            z-index: 500;
+        }
+        
+        .compiler-info.show {
+            display: block;
+        }
+        
+        /* CDN Status Indicator */
+        .cdn-status {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+            margin-left: 4px;
+        }
+        
+        .cdn-status.jsdelivr {
+            background: #ff5627;
+            color: white;
+        }
+        
+        .cdn-status.unpkg {
+            background: #000000;
+            color: white;
+        }
+        
+        .cdn-status.esm-sh {
+            background: #41b883;
+            color: white;
+        }
+        
+        /* Version Source Display */
+        .version-source {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+            background: var(--success-color);
+            color: white;
+        }
+        
+        .version-source.fallback {
+            background: var(--warning-color);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-container.menu-open {
+                margin-left: 0;
+            }
+            
+            .side-menu {
+                width: 280px;
+                left: -280px;
+            }
+            
+            .status-bar.menu-open {
+                left: 0;
+            }
+            
+            .stats-grid {
+                gap: 16px;
+                flex-wrap: wrap;
+            }
+            
+            .workspace {
+                flex-direction: column;
+            }
+            
+            .workspace-panel.code-panel {
+                max-width: 100%;
+            }
+            
+            .header-controls {
+                gap: 8px;
+            }
+            
+            .header-select {
+                padding: 4px 8px;
+                font-size: 12px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header-title p {
+                display: none;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 13px;
+            }
+            
+            .stats-grid {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .main-content {
+                padding: 16px;
+            }
+        }
+        
+        /* Utility Classes */
+        .hidden {
+            display: none !important;
+        }
+        
+        .mb-3 {
+            margin-bottom: 12px;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="hamburger" onclick="toggleMenu()" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="header-content">
+            <div class="header-title">
+                <h1 id="app-title">🚀 AssemblyScript App</h1>
+                <p id="app-description">WebAssembly Application</p>
+            </div>
+            <div class="header-controls">
+                <select class="header-select" id="theme-select" onchange="changeTheme()">
+                    <option value="system">🌓 System</option>
+                    <option value="light">☀️ Light</option>
+                    <option value="dark">🌙 Dark</option>
+                </select>
+                <select class="header-select" id="language-select" onchange="changeLanguage()">
+                    <option value="en">🇬🇧 English</option>
+                    <option value="ja">🇯🇵 日本語</option>
+                </select>
+                <div class="status-indicator">
+                    <div class="status-dot" id="status-dot"></div>
+                    <span id="status-text">Initializing...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Progress Bar -->
+    <div class="progress-container loading" id="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+    
+    <!-- Side Menu -->
+    <div class="side-menu" id="sideMenu">
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+            <button class="tab-button active" onclick="switchTab('app')">
+                <span class="tab-icon">📱</span>
+                <span data-i18n="tab.app">App Settings</span>
+            </button>
+            <button class="tab-button" onclick="switchTab('wasm')">
+                <span class="tab-icon">⚙️</span>
+                <span data-i18n="tab.wasm">WebAssembly</span>
+            </button>
+        </div>
+        
+        <!-- App Settings Tab -->
+        <div class="tab-content active" id="appTab">
+            <div class="menu-section">
+                <div class="menu-header" data-i18n="section.appModule">AppModule Settings</div>
+                <div class="menu-content">
+                    <p style="color: var(--text-secondary); font-size: 13px; padding: 10px;" data-i18n="appModule.reserved">
+                        This section is reserved for custom settings defined by the AppModule.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Compiler info displayed only during debug -->
+            <div class="menu-section hidden" id="compiler-info-section">
+                <div class="menu-header" data-i18n="section.compilerInfo">Compiler Info</div>
+                <div class="menu-content">
+                    <div style="font-size: 12px; color: var(--text-secondary);">
+                        <div class="mb-3">
+                            <strong data-i18n="info.version">Version:</strong> 
+                            <span id="compiler-version-info">-</span>
+                        </div>
+                        <div class="mb-3">
+                            <strong data-i18n="info.source">Source:</strong> 
+                            <span id="version-source-info" class="version-source">-</span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>CDN:</strong> 
+                            <span id="cdn-provider-info" class="cdn-status">-</span>
+                        </div>
+                        <div class="mb-3">
+                            <strong data-i18n="info.loadTime">Load Time:</strong> 
+                            <span id="load-time-info">-</span>ms
+                        </div>
+                        <div>
+                            <strong data-i18n="info.attempts">Attempts:</strong> 
+                            <span id="load-attempts-info">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- WebAssembly Settings Tab -->
+        <div class="tab-content" id="wasmTab">
+            <!-- Command Line Preview (v1.4.1 new feature) -->
+            <div class="menu-section">
+                <div class="menu-header">📟 Command Line</div>
+                <div class="menu-content">
+                    <div style="background: #1e1e1e; border-radius: 6px; padding: 10px; overflow-x: auto;">
+                        <code id="cmd-preview" style="color: #4ade80; font-family: monospace; font-size: 12px; white-space: nowrap; user-select: text;">
+                            asc main.ts -o main.wasm --runtime minimal
+                        </code>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Execution Control Section -->
+            <div class="menu-section">
+                <div class="menu-header" data-i18n="section.execution">Execution Control</div>
+                <div class="menu-content">
+                    <div class="option-item">
+                        <input type="checkbox" id="auto-compile" checked>
+                        <label for="auto-compile" data-i18n="option.autoCompile">Auto Compile</label>
+                    </div>
+                    <div class="option-item">
+                        <input type="checkbox" id="show-stats" checked>
+                        <label for="show-stats" data-i18n="option.showStats">Show Statistics</label>
+                        <div class="toggle-switch" onclick="toggleStats()" id="statsToggle"></div>
+                    </div>
+                    <div class="option-item">
+                        <input type="checkbox" id="show-code-editor">
+                        <label for="show-code-editor" data-i18n="option.showCodeEditor">Show Code Editor</label>
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%; margin-top: 12px;" onclick="recompile()" id="recompileBtn">
+                        ⟳ <span data-i18n="button.recompile">Re-compile</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-header" data-i18n="section.presets">Compilation Presets</div>
+                <div class="menu-content">
+                    <div class="presets">
+                        <button class="preset-btn" onclick="applyPreset('simple')" data-i18n="preset.simple">Simple</button>
+                        <button class="preset-btn" onclick="applyPreset('debug')" data-i18n="preset.debug">Debug</button>
+                        <button class="preset-btn" onclick="applyPreset('release')" data-i18n="preset.release">Release</button>
+                        <button class="preset-btn" onclick="applyPreset('minimal')" data-i18n="preset.minimal">Minimal</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-header" data-i18n="section.optimization">Optimization Options</div>
+                <div class="menu-content">
+                    <div class="option-item">
+                        <input type="checkbox" id="opt-optimize" onchange="updateCmdPreview()">
+                        <label for="opt-optimize">--optimize</label>
+                    </div>
+                    <div class="option-item">
+                        <label>--optimizeLevel</label>
+                        <select id="opt-optimizeLevel" onchange="updateCmdPreview()">
+                            <option value="">Default</option>
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                    </div>
+                    <div class="option-item">
+                        <label>--shrinkLevel</label>
+                        <select id="opt-shrinkLevel" onchange="updateCmdPreview()">
+                            <option value="">Default</option>
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-header" data-i18n="section.runtime">Runtime Options</div>
+                <div class="menu-content">
+                    <div class="option-item">
+                        <label>--runtime</label>
+                        <select id="opt-runtime" onchange="updateCmdPreview()">
+                            <option value="stub">stub</option>
+                            <option value="minimal" selected>minimal</option>
+                            <option value="incremental">incremental</option>
+                        </select>
+                    </div>
+                    <div class="option-item">
+                        <input type="checkbox" id="opt-exportRuntime" onchange="updateCmdPreview()">
+                        <label for="opt-exportRuntime">--exportRuntime</label>
+                    </div>
+                    <div class="option-item">
+                        <input type="checkbox" id="opt-importMemory" onchange="updateCmdPreview()">
+                        <label for="opt-importMemory">--importMemory</label>
+                    </div>
+                    <div class="option-item">
+                        <input type="checkbox" id="opt-sharedMemory" onchange="updateCmdPreview()">
+                        <label for="opt-sharedMemory">--sharedMemory</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-header" data-i18n="section.debug">Debug Options</div>
+                <div class="menu-content">
+                    <div class="option-item">
+                        <input type="checkbox" id="opt-debug" onchange="updateCmdPreview()">
+                        <label for="opt-debug">--debug</label>
+                    </div>
+                    <div class="option-item">
+                        <input type="checkbox" id="opt-sourceMap" onchange="updateCmdPreview()">
+                        <label for="opt-sourceMap">--sourceMap</label>
+                    </div>
+                    <div class="option-item">
+                        <input type="checkbox" id="opt-noAssert" onchange="updateCmdPreview()">
+                        <label for="opt-noAssert">--noAssert</label>
+                    </div>
+                    <div class="option-item">
+                        <input type="checkbox" id="opt-validate" onchange="updateCmdPreview()">
+                        <label for="opt-validate">--validate</label>
+                    </div>
+                    <div class="option-item">
+                        <input type="checkbox" id="opt-measure" onchange="updateCmdPreview()">
+                        <label for="opt-measure">--measure</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-header" data-i18n="section.advanced">Advanced Options</div>
+                <div class="menu-content">
+                    <div class="option-item">
+                        <input type="checkbox" id="opt-exportTable" onchange="updateCmdPreview()">
+                        <label for="opt-exportTable">--exportTable</label>
+                    </div>
+                    <div class="option-item">
+                        <input type="checkbox" id="opt-explicitStart" onchange="updateCmdPreview()">
+                        <label for="opt-explicitStart">--explicitStart</label>
+                    </div>
+                    <div class="option-item">
+                        <input type="checkbox" id="opt-lowMemoryLimit" onchange="updateCmdPreview()">
+                        <label for="opt-lowMemoryLimit">--lowMemoryLimit</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Overlay -->
+    <div class="overlay" id="overlay" onclick="closeMenu()"></div>
+    
+    <!-- Main Content -->
+    <div class="main-container" id="mainContainer">
+        <div class="main-content">
+            <div class="workspace single-column" id="workspace">
+                <!-- Code Panel (Conditionally Displayed) -->
+                <div class="workspace-panel code-panel hidden" id="codePanel">
+                    <div class="panel-header">
+                        <span data-i18n="panel.sourceCode">📝 AssemblyScript Source Code</span>
+                    </div>
+                    <div class="source-code-display" id="source-code-display"></div>
+                </div>
+                
+                <!-- Application Viewport -->
+                <div class="workspace-panel app-panel" id="appPanel">
+                    <div class="panel-header">
+                        <span data-i18n="panel.application">🚀 Application</span>
+                    </div>
+                    <div class="app-viewport" id="app-viewport">
+                        <div class="text-center" style="color: var(--text-secondary);">
+                            <div style="font-size: 48px; margin-bottom: 16px;">⚙️</div>
+                            <div data-i18n="status.initializing">Initializing application...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Status Bar -->
+    <div class="status-bar" id="statusBar">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <span class="stat-label" data-i18n="stat.wasmSize">WASM:</span>
+                <span class="stat-value" id="stat-wasm-size">-</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label" data-i18n="stat.compileTime">Compile:</span>
+                <span class="stat-value" id="stat-compile-time">-</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label" data-i18n="stat.optimization">Optimize:</span>
+                <span class="stat-value" id="stat-opt-level">-</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label" data-i18n="stat.memory">Memory:</span>
+                <span class="stat-value" id="stat-memory">-</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Error Overlay -->
+    <div class="error-overlay" id="error-overlay">
+        <div class="error-card">
+            <div class="error-title">
+                ⚠️ <span data-i18n="error.title">An error occurred</span>
+            </div>
+            <div class="error-content" id="error-content"></div>
+            <div class="error-actions">
+                <button class="error-btn" onclick="copyError()" data-i18n="button.copyError">Copy Error</button>
+                <button class="error-btn error-btn-primary" onclick="closeError()" data-i18n="button.close">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Compiler Info Panel (for debugging) -->
+    <div class="compiler-info" id="compiler-info">
+        AssemblyScript: <span id="compiler-version">-</span> <span id="version-source" class="version-source">-</span><br>
+        CDN Provider: <span id="cdn-provider" class="cdn-status">-</span><br>
+        Load Time: <span id="load-time">-</span>ms<br>
+        Attempts: <span id="load-attempts">-</span>
+    </div>
+    
+    <!-- Main Script -->
+    <script type="module">
+        // ============================================
+        // Internationalization (i18n) System
+        // ============================================
+        const i18n = {
+            ja: {
+                'tab.app': 'アプリ設定', 'tab.wasm': 'WebAssembly', 'section.appModule': 'AppModule設定', 'section.execution': '実行制御', 'section.presets': 'コンパイルプリセット', 'section.optimization': '最適化オプション', 'section.runtime': 'ランタイムオプション', 'section.debug': 'デバッグオプション', 'section.advanced': '高度なオプション', 'section.compilerInfo': 'コンパイラ情報', 'option.autoCompile': '自動コンパイル', 'option.showStats': '統計情報を表示', 'option.showCodeEditor': 'コードエディターを表示', 'button.recompile': '再コンパイル', 'button.copyError': 'エラーをコピー', 'button.close': '閉じる', 'preset.simple': 'シンプル', 'preset.debug': 'デバッグ', 'preset.release': 'リリース', 'preset.minimal': '最小サイズ', 'panel.sourceCode': '📝 AssemblyScript ソースコード', 'panel.application': '🚀 アプリケーション', 'stat.wasmSize': 'WASM:', 'stat.compileTime': 'コンパイル:', 'stat.optimization': '最適化:', 'stat.memory': 'メモリ:', 'status.initializing': 'アプリケーションを初期化しています...', 'status.compiling': 'コンパイル中...', 'status.ready': '実行中', 'error.title': 'エラーが発生しました', 'info.version': 'バージョン', 'info.source': '取得元', 'info.loadTime': '読み込み時間', 'info.attempts': '試行回数', 'appModule.reserved': 'このセクションは、AppModuleが定義するカスタム設定項目用のリザーブエリアです。'
+            },
+            en: {
+                'tab.app': 'App Settings', 'tab.wasm': 'WebAssembly', 'section.appModule': 'AppModule Settings', 'section.execution': 'Execution Control', 'section.presets': 'Compile Presets', 'section.optimization': 'Optimization Options', 'section.runtime': 'Runtime Options', 'section.debug': 'Debug Options', 'section.advanced': 'Advanced Options', 'section.compilerInfo': 'Compiler Info', 'option.autoCompile': 'Auto Compile', 'option.showStats': 'Show Statistics', 'option.showCodeEditor': 'Show Code Editor', 'button.recompile': 'Re-compile', 'button.copyError': 'Copy Error', 'button.close': 'Close', 'preset.simple': 'Simple', 'preset.debug': 'Debug', 'preset.release': 'Release', 'preset.minimal': 'Minimal', 'panel.sourceCode': '📝 AssemblyScript Source Code', 'panel.application': '🚀 Application', 'stat.wasmSize': 'WASM:', 'stat.compileTime': 'Compile:', 'stat.optimization': 'Optimize:', 'stat.memory': 'Memory:', 'status.initializing': 'Initializing application...', 'status.compiling': 'Compiling...', 'status.ready': 'Running', 'error.title': 'An error occurred', 'info.version': 'Version', 'info.source': 'Source', 'info.loadTime': 'Load Time', 'info.attempts': 'Attempts', 'appModule.reserved': 'This section is reserved for custom settings defined by the AppModule.'
+            }
+        };
+        let currentLanguage = 'en';
+        function updateLanguage(lang) {
+            currentLanguage = lang;
+            const translations = i18n[lang];
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translations[key]) { element.textContent = translations[key]; }
+            });
+            localStorage.setItem('language', lang);
+        }
+        
+        // ============================================
+        // Version Management and Metadata
+        // ============================================
+        const VersionManager = {
+            cache: {
+                get() { try { const d = JSON.parse(sessionStorage.getItem('asc_version_cache')); if (d && Date.now() - d.timestamp < 36e5) return d.version; } catch (e) {} return null; },
+                set(v) { try { sessionStorage.setItem('asc_version_cache', JSON.stringify({ version: v, timestamp: Date.now() })); } catch (e) {} }
+            },
+            async getLatestVersion() {
+                const c = this.cache.get(); if (c) return c;
+                const s = [{ n: 'jsDelivr API', fn: () => this.fetchFromJsDelivr() }, { n: 'jsDelivr Pkg', fn: () => this.fetchJsDelivrPackageJson() }, { n: 'Unpkg', fn: () => this.fetchFromUnpkg() }];
+                for (const t of s) { try { const v = await Promise.race([t.fn(), this.timeout(3000)]); if (v && this.isValidStableVersion(v)) { this.cache.set(v); return v; } } catch (e) {} }
+                return "0.28.8";
+            },
+            async fetchFromJsDelivr() { const r = await fetch('https://data.jsdelivr.com/v1/package/npm/assemblyscript'), d = await r.json(); return d.versions.filter(v => this.isValidStableVersion(v))[0]; },
+            async fetchJsDelivrPackageJson() { const r = await fetch('https://cdn.jsdelivr.net/npm/assemblyscript@latest/package.json'), d = await r.json(); return d.version; },
+            async fetchFromUnpkg() { const r = await fetch('https://unpkg.com/assemblyscript@latest/package.json'), d = await r.json(); return d.version; },
+            isValidStableVersion(v) { return /^(\d+)\.(\d+)\.(\d+)$/.test(v) && !['alpha', 'beta', 'rc', 'dev', '-'].some(p => v.toLowerCase().includes(p)); },
+            timeout(ms) { return new Promise((_, r) => setTimeout(() => r(new Error('Timeout')), ms)); }
+        };
+        const COMPILER_METADATA = {
+            version: null, versionSource: null, fetchedFrom: "NPM Registry via CDN", generatedAt: new Date().toISOString(), cdnProvider: null, loadTime: null, attempts: 0,
+            async initialize() { try { this.version = await VersionManager.getLatestVersion(); this.versionSource = 'Dynamic'; } catch (e) { this.version = "0.28.8"; this.versionSource = 'Fallback'; } }
+        };
+        
+        // ============================================
+        // CDN Provider Definitions
+        // ============================================
+        const CDN_PROVIDERS = [
+            { name: 'jsDelivr', baseUrl: 'https://cdn.jsdelivr.net/npm', timeout: 10000, priority: 1 },
+            { name: 'UNPKG', baseUrl: 'https://unpkg.com', timeout: 10000, priority: 2 },
+            { name: 'esm.sh', baseUrl: 'https://esm.sh', timeout: 10000, priority: 3 }
+        ];
+        
+        // ============================================
+        // Application Module (Vector Ping Game)
+        // ============================================
+        const AppModule = {
+            name: "Vector Ping",
+            description: "A retro pong-like game built with WebAssembly",
+            
+            sourceCode: `
+// This function is called by the host environment (JavaScript) to notify WASM of a sound event.
+// We don't need to define it here, just declare it for the compiler.
+@external("env", "playSound")
+declare function playSound(type: i32): void;
+
+// Game constants
+const PADDLE_HEIGHT: f32 = 100.0;
+const PADDLE_WIDTH: f32 = 10.0;
+const BALL_RADIUS: f32 = 8.0;
+const PADDLE_SPEED: f32 = 7.0;
+const INITIAL_BALL_SPEED_X: f32 = 5.0;
+const INITIAL_BALL_SPEED_Y: f32 = 5.0;
+const CANVAS_WIDTH: f32 = 800.0;
+const CANVAS_HEIGHT: f32 = 600.0;
+const MAX_SCORE: i32 = 5;
+
+// Sound types enum (must match JS)
+const SOUND_HIT: i32 = 0;
+const SOUND_SCORE: i32 = 1;
+const SOUND_WALL: i32 = 2;
+
+// --- Global Game State ---
+// Using global variables is simple and efficient for this game's state.
+let score1: i32 = 0;
+let score2: i32 = 0;
+let ballX: f32 = 0.0;
+let ballY: f32 = 0.0;
+let ballVelX: f32 = 0.0;
+let ballVelY: f32 = 0.0;
+let paddle1Y: f32 = 0.0;
+let paddle2Y: f32 = 0.0;
+let paddle1VelY: f32 = 0.0;
+let paddle2VelY: f32 = 0.0;
+let winningPlayer: i32 = 0;
+
+// Initializes the game state. Called from JS.
+export function init(): void {
+  score1 = 0;
+  score2 = 0;
+  paddle1Y = CANVAS_HEIGHT / <f32>2.0 - PADDLE_HEIGHT / <f32>2.0;
+  paddle2Y = CANVAS_HEIGHT / <f32>2.0 - PADDLE_HEIGHT / <f32>2.0;
+  paddle1VelY = <f32>0.0;
+  paddle2VelY = <f32>0.0;
+  winningPlayer = 0;
+  resetBall(1);
+}
+
+// Resets the ball to the center after a score.
+function resetBall(direction: i32): void {
+  ballX = CANVAS_WIDTH / <f32>2.0;
+  ballY = CANVAS_HEIGHT / <f32>2.0;
+  ballVelX = INITIAL_BALL_SPEED_X * <f32>direction;
+  // Randomize initial Y velocity
+  ballVelY = (Math.random() > 0.5 ? <f32>1.0 : <f32>-1.0) * INITIAL_BALL_SPEED_Y;
+}
+
+// The main game loop, called every frame from JS.
+export function update(isTwoPlayer: bool): void {
+  if (winningPlayer != 0) return; // Game is over, stop updates
+
+  // --- Paddle Movement ---
+  paddle1Y += paddle1VelY;
+  paddle2Y += paddle2VelY;
+
+  // Paddle bounds checking
+  paddle1Y = <f32>Math.max(<f32>0.0, Math.min(paddle1Y, CANVAS_HEIGHT - PADDLE_HEIGHT));
+  paddle2Y = <f32>Math.max(<f32>0.0, Math.min(paddle2Y, CANVAS_HEIGHT - PADDLE_HEIGHT));
+
+  // --- AI Logic (for single player mode) ---
+  if (!isTwoPlayer) {
+    const paddle2Center = paddle2Y + PADDLE_HEIGHT / <f32>2.0;
+    // A simple AI that tries to follow the ball, with a slight delay to be beatable.
+    if (paddle2Center < ballY - PADDLE_HEIGHT * <f32>0.2) {
+      paddle2Y += PADDLE_SPEED * <f32>0.65;
+    } else if (paddle2Center > ballY + PADDLE_HEIGHT * <f32>0.2) {
+      paddle2Y -= PADDLE_SPEED * <f32>0.65;
+    }
+  }
+
+  // --- Ball Movement ---
+  ballX += ballVelX;
+  ballY += ballVelY;
+
+  // --- Collision Detection ---
+  // Top & Bottom Walls
+  if (ballY - BALL_RADIUS < <f32>0.0 || ballY + BALL_RADIUS > CANVAS_HEIGHT) {
+    ballVelY = -ballVelY;
+    playSound(SOUND_WALL);
+  }
+
+  // Paddles
+  let paddle1_top = paddle1Y;
+  let paddle1_bottom = paddle1Y + PADDLE_HEIGHT;
+  let paddle1_right = PADDLE_WIDTH;
+
+  let paddle2_top = paddle2Y;
+  let paddle2_bottom = paddle2Y + PADDLE_HEIGHT;
+  let paddle2_left = CANVAS_WIDTH - PADDLE_WIDTH;
+  
+  // Player 1 (left paddle)
+  if (ballVelX < 0 && ballX - BALL_RADIUS < paddle1_right && ballX > 0 && ballY > paddle1_top && ballY < paddle1_bottom) {
+    ballVelX = -ballVelX * <f32>1.05; // Increase speed slightly on hit
+    let deltaY = ballY - (paddle1Y + PADDLE_HEIGHT / <f32>2.0);
+    ballVelY = deltaY * <f32>0.25; // Change angle based on where it hit the paddle
+    playSound(SOUND_HIT);
+  }
+
+  // Player 2 (right paddle)
+  if (ballVelX > 0 && ballX + BALL_RADIUS > paddle2_left && ballX < CANVAS_WIDTH && ballY > paddle2_top && ballY < paddle2_bottom) {
+    ballVelX = -ballVelX * <f32>1.05; // Increase speed
+    let deltaY = ballY - (paddle2Y + PADDLE_HEIGHT / <f32>2.0);
+    ballVelY = deltaY * <f32>0.25; // Change angle
+    playSound(SOUND_HIT);
+  }
+
+  // --- Scoring ---
+  if (ballX < <f32>0.0) { // Player 2 scores
+    score2++;
+    playSound(SOUND_SCORE);
+    if (score2 >= MAX_SCORE) {
+        winningPlayer = 2;
+    } else {
+        resetBall(1);
+    }
+  }
+  if (ballX > CANVAS_WIDTH) { // Player 1 scores
+    score1++;
+    playSound(SOUND_SCORE);
+    if (score1 >= MAX_SCORE) {
+        winningPlayer = 1;
+    } else {
+        resetBall(-1);
+    }
+  }
+}
+
+// --- Input Handlers (called from JS) ---
+export function setPaddle1Velocity(direction: f32): void {
+  paddle1VelY = direction * PADDLE_SPEED;
+}
+export function setPaddle2Velocity(direction: f32): void {
+  paddle2VelY = direction * PADDLE_SPEED;
+}
+
+// --- Getters for JS Rendering ---
+export function getBallX(): f32 { return ballX; }
+export function getBallY(): f32 { return ballY; }
+export function getPaddle1Y(): f32 { return paddle1Y; }
+export function getPaddle2Y(): f32 { return paddle2Y; }
+export function getScore1(): i32 { return score1; }
+export function getScore2(): i32 { return score2; }
+export function getWinningPlayer(): i32 { return winningPlayer; }
+            `.trim(),
+            
+            defaultOptions: {
+                optimize: true,
+                optimizeLevel: '3',
+                shrinkLevel: '1',
+                noAssert: true,
+                runtime: 'minimal',
+            },
+            
+            getImports() {
+                // This is where we connect the 'playSound' function declared in AssemblyScript
+                // to the actual JavaScript implementation.
+                return {
+                    env: {
+                        playSound: (type) => this.sound.play(type)
+                    }
+                };
+            },
+            
+            // This 'init' is called ONCE from the main script after WASM is compiled.
+            // It sets up the entire game environment.
+            async init(wasmExports) {
+                // Game state and rendering setup
+                this.GAME_WIDTH = 800;
+                this.GAME_HEIGHT = 600;
+                this.wasm = wasmExports;
+                this.state = 'TITLE'; // TITLE, MODE_SELECT, PLAY, GAME_OVER
+                this.mode = '1P'; // '1P' or '2P'
+                this.lastTime = 0;
+                this.blinker = 0;
+                
+                // Input handling setup
+                this.input = {
+                    p1: 0, // -1 for up, 1 for down, 0 for still
+                    p2: 0,
+                    action: false
+                };
+                this.keys = new Set();
+                window.addEventListener('keydown', (e) => this.keys.add(e.code));
+                window.addEventListener('keyup', (e) => this.keys.delete(e.code));
+                
+                // Sound engine setup
+                this.sound = this.createSoundEngine();
+                
+                // Canvas setup
+                const viewport = document.getElementById('app-viewport');
+                viewport.innerHTML = `<canvas id="game-canvas"></canvas>`;
+                this.canvas = document.getElementById('game-canvas');
+                this.ctx = this.canvas.getContext('2d');
+                
+                this.resizeCanvas();
+                window.addEventListener('resize', () => this.resizeCanvas());
+
+                // Start the game loop
+                requestAnimationFrame((time) => this.gameLoop(time));
+            },
+
+            resizeCanvas() {
+                this.canvas.width = this.GAME_WIDTH;
+                this.canvas.height = this.GAME_HEIGHT;
+            },
+            
+            createSoundEngine() {
+                let audioCtx;
+                let bgmInterval;
+                const SOUND_HIT = 0, SOUND_SCORE = 1, SOUND_WALL = 2, SOUND_SELECT = 3;
+
+                const getAudioContext = () => {
+                    if (!audioCtx) {
+                       try {
+                           audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                       } catch (e) {
+                           console.warn("Web Audio API is not supported in this browser");
+                       }
+                    }
+                    return audioCtx;
+                }
+
+                const playTone = (freq, duration, type = 'sine', vol = 0.5) => {
+                    const ctx = getAudioContext();
+                    if (!ctx) return;
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, ctx.currentTime);
+                    gain.gain.setValueAtTime(vol, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + duration);
+                };
+                
+                const bgmNotes = [261.63, 329.63, 392.00, 329.63]; // C4, E4, G4, E4
+                let bgmIndex = 0;
+
+                return {
+                    play: (type) => {
+                        if (type === SOUND_HIT) playTone(110, 0.1, 'square', 0.3);
+                        else if (type === SOUND_SCORE) playTone(523.25, 0.3, 'sine', 0.5);
+                        else if (type === SOUND_WALL) playTone(80, 0.05, 'triangle', 0.2);
+                        else if (type === SOUND_SELECT) playTone(392.00, 0.15, 'sine', 0.4);
+                    },
+                    startBGM: () => {
+                        if (bgmInterval) return;
+                        const ctx = getAudioContext();
+                        if (!ctx || ctx.state === 'suspended') {
+                           ctx.resume();
+                        }
+                        bgmInterval = setInterval(() => {
+                           playTone(bgmNotes[bgmIndex], 0.15, 'triangle', 0.1);
+                           bgmIndex = (bgmIndex + 1) % bgmNotes.length;
+                        }, 300);
+                    },
+                    stopBGM: () => {
+                       clearInterval(bgmInterval);
+                       bgmInterval = null;
+                    }
+                };
+            },
+
+            handleInput() {
+                // Reset per frame
+                this.input.p1 = 0;
+                this.input.p2 = 0;
+                this.input.action = this.keys.has('Enter') || this.keys.has('Space');
+
+                // Keyboard P1
+                if (this.keys.has('KeyW')) this.input.p1 = -1;
+                if (this.keys.has('KeyS')) this.input.p1 = 1;
+
+                // Keyboard P2 (or P1 arrows)
+                if (this.keys.has('ArrowUp')) this.input.p2 = -1;
+                if (this.keys.has('ArrowDown')) this.input.p2 = 1;
+
+                // Gamepad support
+                try {
+                    const gamepads = navigator.getGamepads();
+                    for (const gp of gamepads) {
+                        if (!gp) continue;
+
+                        // P1 Gamepad
+                        if (gp.index === 0) {
+                            if (gp.axes[1] < -0.5) this.input.p1 = -1;
+                            if (gp.axes[1] > 0.5) this.input.p1 = 1;
+                            if (gp.buttons[0].pressed || gp.buttons[9].pressed) this.input.action = true;
+                        }
+                        // P2 Gamepad
+                        if (gp.index === 1) {
+                            if (gp.axes[1] < -0.5) this.input.p2 = -1;
+                            if (gp.axes[1] > 0.5) this.input.p2 = 1;
+                        }
+                    }
+                } catch(e) {
+                    // Gamepad API might not be available
+                }
+                
+                // In 1P mode, arrows also control P1
+                if (this.mode === '1P') {
+                    if (this.input.p2 !== 0) {
+                        this.input.p1 = this.input.p2;
+                    }
+                }
+            },
+            
+            // This is the main game loop, called by requestAnimationFrame.
+            // It's not the same as the wasm 'update'. This function controls the *entire* app flow.
+            gameLoop(time) {
+                // const deltaTime = (time - this.lastTime) / 1000;
+                this.lastTime = time;
+                this.blinker = (this.blinker + 1) % 60;
+
+                this.handleInput();
+
+                // --- State Machine ---
+                switch(this.state) {
+                    case 'TITLE':
+                        this.sound.startBGM();
+                        if (this.input.action) {
+                           this.state = 'MODE_SELECT';
+                           this.sound.play(3); // SOUND_SELECT
+                        }
+                        break;
+                    
+                    case 'MODE_SELECT':
+                        // Use up/down to select mode
+                        if (this.keys.has('ArrowUp') || this.keys.has('KeyW')) this.mode = '1P';
+                        if (this.keys.has('ArrowDown') || this.keys.has('KeyS')) this.mode = '2P';
+                        
+                        if (this.input.action) {
+                            this.wasm.init();
+                            this.state = 'PLAY';
+                            this.sound.play(3);
+                            this.sound.stopBGM();
+                        }
+                        break;
+                        
+                    case 'PLAY':
+                        this.wasm.setPaddle1Velocity(this.input.p1);
+                        this.wasm.setPaddle2Velocity(this.mode === '2P' ? this.input.p2 : 0);
+                        this.wasm.update(this.mode === '2P');
+                        if (this.wasm.getWinningPlayer() !== 0) {
+                            this.state = 'GAME_OVER';
+                            this.sound.startBGM();
+                        }
+                        break;
+                        
+                    case 'GAME_OVER':
+                        if (this.input.action) {
+                            this.state = 'TITLE';
+                            this.sound.play(3);
+                        }
+                        break;
+                }
+                
+                this.render();
+                
+                requestAnimationFrame((t) => this.gameLoop(t));
+            },
+            
+            // Main rendering function.
+            render() {
+                const ctx = this.ctx;
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(0, 0, this.GAME_WIDTH, this.GAME_HEIGHT);
+
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = '32px "Courier New", Courier, monospace';
+                ctx.textAlign = 'center';
+                
+                switch(this.state) {
+                    case 'TITLE':
+                        ctx.font = '80px "Courier New", Courier, monospace';
+                        ctx.fillText('VECTOR PING', this.GAME_WIDTH / 2, this.GAME_HEIGHT / 2 - 50);
+                        if (this.blinker < 30) {
+                            ctx.font = '24px "Courier New", Courier, monospace';
+                            ctx.fillText('PRESS ENTER / START', this.GAME_WIDTH / 2, this.GAME_HEIGHT / 2 + 50);
+                        }
+                        break;
+                        
+                    case 'MODE_SELECT':
+                        ctx.fillText('SELECT MODE', this.GAME_WIDTH / 2, this.GAME_HEIGHT / 2 - 100);
+                        
+                        ctx.font = '48px "Courier New", Courier, monospace';
+                        if (this.mode === '1P') ctx.fillStyle = '#FFFF00';
+                        ctx.fillText('1 PLAYER', this.GAME_WIDTH / 2, this.GAME_HEIGHT / 2);
+                        ctx.fillStyle = '#FFFFFF';
+                        
+                        if (this.mode === '2P') ctx.fillStyle = '#FFFF00';
+                        ctx.fillText('2 PLAYER', this.GAME_WIDTH / 2, this.GAME_HEIGHT / 2 + 80);
+                        ctx.fillStyle = '#FFFFFF';
+                        break;
+                        
+                    case 'PLAY':
+                    case 'GAME_OVER':
+                        // Draw center line
+                        ctx.strokeStyle = '#FFFFFF';
+                        ctx.setLineDash([10, 10]);
+                        ctx.beginPath();
+                        ctx.moveTo(this.GAME_WIDTH / 2, 0);
+                        ctx.lineTo(this.GAME_WIDTH / 2, this.GAME_HEIGHT);
+                        ctx.stroke();
+                        ctx.setLineDash([]);
+                        
+                        // Draw paddles and ball
+                        const PADDLE_WIDTH = 10;
+                        const PADDLE_HEIGHT = 100;
+                        const BALL_RADIUS = 8;
+                        ctx.fillRect(0, this.wasm.getPaddle1Y(), PADDLE_WIDTH, PADDLE_HEIGHT);
+                        ctx.fillRect(this.GAME_WIDTH - PADDLE_WIDTH, this.wasm.getPaddle2Y(), PADDLE_WIDTH, PADDLE_HEIGHT);
+
+                        ctx.beginPath();
+                        ctx.arc(this.wasm.getBallX(), this.wasm.getBallY(), BALL_RADIUS, 0, Math.PI * 2);
+                        ctx.fill();
+                        
+                        // Draw scores
+                        ctx.font = '80px "Courier New", Courier, monospace';
+                        ctx.fillText(this.wasm.getScore1(), this.GAME_WIDTH / 4, 100);
+                        ctx.fillText(this.wasm.getScore2(), this.GAME_WIDTH * 3 / 4, 100);
+
+                        if(this.state === 'GAME_OVER') {
+                             ctx.font = '48px "Courier New", Courier, monospace';
+                             const winner = this.wasm.getWinningPlayer();
+                             ctx.fillText(`PLAYER ${winner} WINS!`, this.GAME_WIDTH / 2, this.GAME_HEIGHT / 2);
+                             if (this.blinker < 30) {
+                                ctx.font = '24px "Courier New", Courier, monospace';
+                                ctx.fillText('PRESS ENTER TO CONTINUE', this.GAME_WIDTH / 2, this.GAME_HEIGHT / 2 + 60);
+                            }
+                        }
+                        break;
+                }
+            }
+        };
+
+        // ============================================
+        // Safe Initialization
+        // ============================================
+        let wasmExports = null;
+        let isCompiling = false;
+        let menuOpen = false;
+        let statsVisible = false;
+        let optionsChanged = false;
+        
+        // ============================================
+        // Command Line Preview Feature
+        // ============================================
+        function updateCmdPreview() {
+            const options = {};
+            ['optimize', 'exportRuntime', 'noAssert', 'debug', 'sourceMap', 'measure', 'validate', 'importMemory', 'sharedMemory', 'exportTable', 'explicitStart', 'lowMemoryLimit'].forEach(opt => { const el = document.getElementById(`opt-${opt}`); if (el && el.checked) options[opt] = true; });
+            ['optimizeLevel', 'shrinkLevel', 'runtime'].forEach(opt => { const el = document.getElementById(`opt-${opt}`); if (el && el.value) options[opt] = el.value; });
+            const cmd = generateCmdLine(options);
+            const preview = document.getElementById('cmd-preview');
+            if (preview) { preview.textContent = cmd; }
+            markOptionsChanged();
+        }
+        function markOptionsChanged() {
+            if (!optionsChanged) {
+                optionsChanged = true;
+                const btn = document.getElementById('recompileBtn');
+                if (btn) { btn.classList.add('options-changed'); btn.innerHTML = '⚠️ <span data-i18n="button.recompile">Re-compile</span>'; }
+            }
+        }
+        function generateCmdLine(options) {
+            const parts = ['asc', 'main.ts', '-o', 'main.wasm'];
+            Object.entries(options).forEach(([k, v]) => { if (typeof v === 'boolean' && v) { parts.push(`--${k}`); } else if (typeof v !== 'boolean' && v !== '') { parts.push(`--${k}`, v.toString()); } });
+            return parts.join(' ');
+        }
+        
+        // ============================================
+        // UI Control Functions
+        // ============================================
+        function toggleMenu() {
+            menuOpen = !menuOpen;
+            document.getElementById('hamburger').classList.toggle('active');
+            document.getElementById('sideMenu').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+            document.getElementById('mainContainer').classList.toggle('menu-open');
+            document.getElementById('statusBar').classList.toggle('menu-open');
+        }
+        function closeMenu() { if (menuOpen) toggleMenu(); }
+        function toggleStats() {
+            statsVisible = !statsVisible;
+            document.getElementById('statsToggle').classList.toggle('active', statsVisible);
+            document.getElementById('statusBar').classList.toggle('active', statsVisible);
+            document.getElementById('show-stats').checked = statsVisible;
+            localStorage.setItem('statsVisible', statsVisible);
+        }
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+            event.target.closest('.tab-button').classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById(tabName + 'Tab').classList.add('active');
+        }
+        function changeTheme() { const t = document.getElementById('theme-select').value; document.documentElement.setAttribute('data-theme', t); localStorage.setItem('theme', t); }
+        function changeLanguage() { updateLanguage(document.getElementById('language-select').value); }
+        function toggleCodeEditor() {
+            const show = document.getElementById('show-code-editor').checked;
+            document.getElementById('codePanel').classList.toggle('hidden', !show);
+            document.getElementById('workspace').classList.toggle('single-column', !show);
+            if (show) { document.getElementById('source-code-display').textContent = AppModule.sourceCode; }
+            localStorage.setItem('showCodeEditor', show);
+        }
+        window.toggleMenu = toggleMenu; window.closeMenu = closeMenu; window.toggleStats = toggleStats; window.switchTab = switchTab; window.changeTheme = changeTheme; window.changeLanguage = changeLanguage; window.updateCmdPreview = updateCmdPreview;
+        
+        function updateStatus(status, message) {
+            const dot = document.getElementById('status-dot');
+            const text = document.getElementById('status-text');
+            if (dot) { dot.className = `status-dot ${status === 'loading' ? 'loading' : status === 'error' ? 'error' : ''}`; }
+            if (text) { const key = `status.${status}`; text.textContent = i18n[currentLanguage][key] || message; }
+            document.getElementById('progress-container').classList.toggle('loading', status === 'loading');
+        }
+        function updateProgress(percent, message, detail = null) {
+            document.getElementById('progress-bar').style.width = `${percent}%`;
+            let status = message; if (detail) status += ` (${detail})`;
+            document.getElementById('status-text').textContent = status;
+        }
+        
+        // ============================================
+        // Compiler Loader
+        // ============================================
+        async function loadCompilerWithCDNFallback() {
+            const version = COMPILER_METADATA.version;
+            for (let i = 0; i < CDN_PROVIDERS.length; i++) {
+                const cdn = CDN_PROVIDERS[i];
+                const startTime = performance.now();
+                try {
+                    updateProgress(30 + (i * 23), 'Loading compiler', `${cdn.name}`);
+                    const url = `${cdn.baseUrl}/assemblyscript@${version}/dist/web.js`;
+                    await loadWebJS(url, cdn.timeout);
+                    await waitForImportMap();
+                    const asc = await import("assemblyscript/asc");
+                    const compiler = asc.default || asc;
+                    await validateCompiler(compiler);
+                    COMPILER_METADATA.cdnProvider = cdn.name;
+                    COMPILER_METADATA.loadTime = Math.round(performance.now() - startTime);
+                    COMPILER_METADATA.attempts = i + 1;
+                    updateProgress(100, 'Compiler ready');
+                    updateCompilerInfo();
+                    return compiler;
+                } catch (error) { cleanupFailedScripts(); delete window.ASSEMBLYSCRIPT_VERSION; delete window.ASSEMBLYSCRIPT_IMPORTMAP; }
+            }
+            throw new Error(`Failed to load AssemblyScript ${version} from all CDN providers`);
+        }
+        function loadWebJS(url, timeout) {
+            return new Promise((resolve, reject) => {
+                if (window.ASSEMBLYSCRIPT_VERSION) { resolve(); return; }
+                const script = document.createElement('script');
+                script.src = url; script.dataset.assemblyScript = 'loading';
+                const timeoutId = setTimeout(() => { script.remove(); reject(new Error(`Timeout: ${url}`)); }, timeout);
+                script.onload = () => { clearTimeout(timeoutId); script.dataset.assemblyScript = 'loaded'; setTimeout(resolve, 300); };
+                script.onerror = () => { clearTimeout(timeoutId); script.remove(); reject(new Error(`Failed: ${url}`)); };
+                document.head.appendChild(script);
+            });
+        }
+        async function waitForImportMap() {
+            for (let i = 0; i < 20; i++) {
+                if (window.ASSEMBLYSCRIPT_VERSION) return;
+                await new Promise(r => setTimeout(r, 100));
+            }
+            throw new Error('Import map timeout');
+        }
+        async function validateCompiler(c) {
+            if (!c || typeof c.main !== 'function') throw new Error('Invalid compiler object');
+            const { error } = await c.main(['t.ts', '--validate'], { readFile: n => n === 't.ts' ? 'export function t():i32{return 42}' : null, writeFile: () => {}, listFiles: () => ['t.ts'] });
+            if (error) throw new Error('Compiler validation failed');
+        }
+        function cleanupFailedScripts() { document.querySelectorAll('script[data-assembly-script]:not([data-assembly-script="loaded"])').forEach(s => s.remove()); }
+        function updateCompilerInfo() {
+            const { version, versionSource, cdnProvider, loadTime, attempts } = COMPILER_METADATA;
+            document.getElementById('compiler-version').textContent = version;
+            document.getElementById('version-source').textContent = versionSource;
+            document.getElementById('version-source').className = `version-source ${versionSource === 'Fallback' ? 'fallback' : ''}`;
+            document.getElementById('cdn-provider').textContent = cdnProvider;
+            document.getElementById('cdn-provider').className = `cdn-status ${cdnProvider.toLowerCase().replace('.', '-')}`;
+            document.getElementById('load-time').textContent = loadTime;
+            document.getElementById('load-attempts').textContent = attempts;
+            document.getElementById('compiler-version-info').textContent = `v${version}`;
+            document.getElementById('version-source-info').textContent = versionSource;
+            document.getElementById('cdn-provider-info').textContent = cdnProvider;
+            document.getElementById('cdn-provider-info').className = `cdn-status ${cdnProvider.toLowerCase().replace('.', '-')}`;
+            document.getElementById('load-time-info').textContent = loadTime;
+            document.getElementById('load-attempts-info').textContent = attempts;
+        }
+        
+        async function safeInit() {
+            try {
+                await COMPILER_METADATA.initialize();
+                const asc = await loadCompilerWithCDNFallback();
+                if (!asc) throw new Error('Failed to load compiler');
+                window.asc = asc;
+                
+                const theme = localStorage.getItem('theme') || 'system';
+                document.getElementById('theme-select').value = theme;
+                document.documentElement.setAttribute('data-theme', theme);
+                
+                const lang = localStorage.getItem('language') || 'en';
+                document.getElementById('language-select').value = lang;
+                updateLanguage(lang);
+                
+                document.getElementById('show-code-editor').checked = localStorage.getItem('showCodeEditor') === 'true';
+                toggleCodeEditor();
+                
+                if (localStorage.getItem('debug') === 'true') {
+                    document.getElementById('compiler-info').classList.add('show');
+                    document.getElementById('compiler-info-section').classList.remove('hidden');
+                }
+                
+                await initializeApp(asc);
+            } catch (error) { showFatalError(`Failed to load compiler (v${COMPILER_METADATA.version}). Please reload.`); }
+        }
+        
+        // ============================================
+        // Preset Definitions & Compiler Core
+        // ============================================
+        const PRESETS = {
+            simple: { optimize: false, runtime: 'minimal' },
+            debug: { optimize: false, optimizeLevel: '0', debug: true, sourceMap: true, measure: true },
+            release: { optimize: true, optimizeLevel: '3', shrinkLevel: '1', noAssert: true },
+            minimal: { optimize: true, optimizeLevel: '3', shrinkLevel: '2', runtime: 'stub', noAssert: true }
+        };
+        const CompilerCore = {
+            compiler: null, init(asc) { this.compiler = asc; },
+            async compile(src, opts) {
+                if (!this.compiler) throw new Error('Compiler not init');
+                const flags = this.buildOptions(opts); let bin = null; let stats = '';
+                const { error, stdout, stderr } = await this.compiler.main(flags, {
+                    readFile: f => f === "main.ts" ? src : null,
+                    writeFile: (f, c) => { if (f === "main.wasm") bin = c; },
+                    listFiles: () => ["main.ts"]
+                });
+                if (error) throw new Error(stderr || error.toString());
+                if (!bin) throw new Error('No wasm binary');
+                if (stdout) stats = stdout;
+                return { wasmBinary: bin, stats };
+            },
+            buildOptions(userOpts) {
+                const flags = ["main.ts", "-o", "main.wasm"];
+                Object.entries(userOpts).forEach(([k, v]) => { if (typeof v === 'boolean' && v) flags.push(`--${k}`); else if (typeof v !== 'boolean' && v !== '') flags.push(`--${k}`, v.toString()); });
+                return flags;
+            }
+        };
+        
+        // ============================================
+        // Options Management
+        // ============================================
+        const OptionsManager = {
+            current: {}, init() { this.current = { runtime: 'minimal' }; this.loadFromStorage(); this.updateUI(); updateCmdPreview(); },
+            apply(p) { if (PRESETS[p]) { document.querySelectorAll('[id^="opt-"]').forEach(el => { if (el.type === 'checkbox') el.checked = false; else if (el.tagName === 'SELECT') { const d = el.querySelector('option[selected]'); el.value = d ? d.value : (el.options[0] ? el.options[0].value : ''); } }); this.current = { ...PRESETS[p] }; this.updateUI(); this.saveToStorage(); } },
+            collectFromUI() { const opts = {}; ['optimize', 'exportRuntime', 'noAssert', 'debug', 'sourceMap', 'measure', 'validate', 'importMemory', 'sharedMemory', 'exportTable', 'explicitStart', 'lowMemoryLimit'].forEach(o => { const e = document.getElementById(`opt-${o}`); if (e && e.checked) opts[o] = true; }); ['optimizeLevel', 'shrinkLevel', 'runtime'].forEach(o => { const e = document.getElementById(`opt-${o}`); if (e && e.value) opts[o] = e.value; }); this.current = opts; this.saveToStorage(); return opts; },
+            updateUI() { Object.keys(this.current).forEach(k => { const e = document.getElementById(`opt-${k}`); if (e) { if (e.type === 'checkbox') e.checked = this.current[k] === true; else e.value = this.current[k] || ''; } }); },
+            saveToStorage() { try { localStorage.setItem('asmOptions', JSON.stringify(this.current)); } catch (e) {} },
+            loadFromStorage() { try { const s = localStorage.getItem('asmOptions'); if (s) this.current = JSON.parse(s); } catch (e) {} }
+        };
+        
+        // ============================================
+        // WebAssembly Execution Management
+        // ============================================
+        const WasmRunner = {
+            instance: null,
+            async instantiate(bin, imports = {}) {
+                const defaultImports = { env: { abort: (m, f, l, c) => console.error(`Abort: ${m} at ${f}:${l}:${c}`), trace: (m, n, ...a) => console.log(`Trace: ${m}`, ...a), seed: () => Date.now(), memory: new WebAssembly.Memory({ initial: 1 }) }, Math, Date };
+                const merged = this.mergeImports(defaultImports, imports);
+                const buffer = (bin instanceof ArrayBuffer) ? bin : bin.buffer.slice(bin.byteOffset, bin.byteOffset + bin.byteLength);
+                const module = await WebAssembly.compile(buffer);
+                this.instance = await WebAssembly.instantiate(module, merged);
+                return this.instance.exports;
+            },
+            mergeImports(d, c) { const m = { ...d }; Object.keys(c).forEach(k => { m[k] = (typeof c[k] === 'object' && !Array.isArray(c[k])) ? { ...d[k], ...c[k] } : c[k]; }); return m; }
+        };
+        
+        // ============================================
+        // Stats, Errors, and Compilation Flow
+        // ============================================
+        function updateStats(compileTime, wasmSize) {
+            document.getElementById('stat-compile-time').textContent = compileTime ? `${compileTime}ms` : '-';
+            document.getElementById('stat-wasm-size').textContent = wasmSize ? `${(wasmSize / 1024).toFixed(1)}KB` : '-';
+            const opt = document.getElementById('opt-optimize').checked;
+            document.getElementById('stat-opt-level').textContent = opt ? (document.getElementById('opt-optimizeLevel').value || 'default') : 'OFF';
+            if (wasmExports && wasmExports.memory) { const p = wasmExports.memory.buffer.byteLength / 65536; document.getElementById('stat-memory').textContent = `${p} page${p !== 1 ? 's' : ''}`; }
+        }
+        function showError(error) {
+            console.error(error); document.getElementById('error-content').textContent = error.stack || error.message || String(error);
+            document.getElementById('error-overlay').style.display = 'flex'; updateStatus('error', 'An error occurred');
+        }
+        window.closeError = () => { document.getElementById('error-overlay').style.display = 'none'; };
+        window.copyError = async () => { try { await navigator.clipboard.writeText(document.getElementById('error-content').textContent); } catch (e) {} };
+        window.applyPreset = (p) => { OptionsManager.apply(p); updateCmdPreview(); };
+        
+        async function compile() {
+            if (isCompiling) return;
+            isCompiling = true;
+            const startTime = performance.now();
+            try {
+                updateStatus('loading', 'Compiling...');
+                const options = OptionsManager.collectFromUI();
+                const { wasmBinary, stats } = await CompilerCore.compile(AppModule.sourceCode, options);
+                const imports = AppModule.getImports();
+                wasmExports = await WasmRunner.instantiate(wasmBinary, imports);
+                const compileTime = Math.round(performance.now() - startTime);
+                updateStats(compileTime, wasmBinary.byteLength);
+                if (AppModule.init) await AppModule.init(wasmExports);
+                updateStatus('ready', 'Running');
+                optionsChanged = false;
+                const btn = document.getElementById('recompileBtn');
+                if (btn) { btn.classList.remove('options-changed'); btn.innerHTML = '⟳ <span data-i18n="button.recompile">Re-compile</span>'; }
+                return true;
+            } catch (error) { showError(error); return false; } finally { isCompiling = false; }
+        }
+        
+        async function recompile() {
+            const btn = document.getElementById('recompileBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '⏳ ' + (i18n[currentLanguage]['status.compiling'] || 'Compiling...');
+            btn.disabled = true;
+            await compile();
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+        window.recompile = recompile;
+        
+        // ============================================
+        // Main Application Initialization
+        // ============================================
+        async function initializeApp(asc) {
+            document.getElementById('app-title').textContent = `🎮 ${AppModule.name}`;
+            document.getElementById('app-description').textContent = AppModule.description;
+            document.getElementById('show-code-editor').addEventListener('change', toggleCodeEditor);
+            document.getElementById('show-stats').addEventListener('change', (e) => { statsVisible = e.target.checked; toggleStats(); });
+            if (localStorage.getItem('statsVisible') === 'true') { statsVisible = true; document.getElementById('statsToggle').classList.add('active'); document.getElementById('statusBar').classList.add('active'); document.getElementById('show-stats').checked = true; }
+            CompilerCore.init(asc);
+            OptionsManager.init();
+            if (AppModule.defaultOptions) { OptionsManager.current = { ...AppModule.defaultOptions }; OptionsManager.updateUI(); }
+            updateStatus('loading', 'Preparing compilation...');
+            if (document.getElementById('auto-compile').checked) { await compile(); } else {
+                updateStatus('ready', 'Waiting');
+                document.getElementById('app-viewport').innerHTML = `<div class="text-center" style="color: var(--text-secondary);"><div style="font-size: 48px; margin-bottom: 16px;">⏸️</div><div>Auto compile disabled</div><button class="btn btn-primary" style="margin-top: 20px;" onclick="recompile()">⟳ Start</button></div>`;
+            }
+        }
+        
+        function showFatalError(message) {
+            document.getElementById('status-text').textContent = message;
+            document.getElementById('status-dot').className = 'status-dot error';
+            document.getElementById('app-viewport').innerHTML = `<div style="text-align: center; color: var(--error-color);"><div style="font-size: 48px; margin-bottom: 16px;">⚠️</div><div style="font-size: 18px; font-weight: bold;">Init Error</div><div style="margin-top: 12px; color: var(--text-secondary);">${message}</div><button onclick="location.reload()" style="margin-top: 20px; padding: 10px 20px; background: var(--primary-color); color: white; border: none; border-radius: 6px; cursor: pointer;">Reload</button></div>`;
+        }
+        
+        // ============================================
+        // Entry Point
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => { document.getElementById('status-text').textContent = 'Loading compiler...'; });
+        setTimeout(() => { safeInit().catch(error => { console.error('[Init] Failed:', error); showFatalError('Init failed: ' + error.message); }); }, 100);
+    </script>
+</body>
+</html>
