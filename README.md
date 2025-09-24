@@ -12,7 +12,7 @@ Attach the above file to the AI chat and provide instructions such as: “Please
 ## 💣Caution! This product is still PoC!💣
 ## 🚽Please flush away any complaints as this is a proof of concept🚽
 ## What is this?
-If we could prepare something like a Dockerfile for Docker and create desired files on the browser's sandbox, it would surely be convenient. With the advancement of [SLM](https://atmarkit.itmedia.co.jp/ait/articles/2508/22/news016.html) and context window size, it should be possible to run on edge devices too.
+If we could prepare something like a Dockerfile for Docker and create desired files on the browser's sandbox, it would surely be convenient. With the advancement of [SLM](https://www.ibm.com/think/topics/small-language-models) and context window size, it should be possible to run on edge devices too.
 <BR><BR>
 This repository is the result of shaping the above idea to a working stage using AI. While it seems reasonably useful even at this stage, please feel free to modify it according to your use and needs.
 <BR><BR>
@@ -213,7 +213,7 @@ Please create a Pong clone that meets the following requirements:
 - Compatible browser (Chrome, Firefox, Edge, Safari)
 - Recipe files (included in this project)
 - AI assistant (choose from):
-  - **Privacy-focused**: [Ollama](https://ollama.ai/), [Jan](https://jan.ai/), [Docker Model Runner](https://www.docker.com/ja-jp/blog/introducing-docker-model-runner/), [LM Studio](https://lmstudio.ai/) etc. (local AI)
+  - **Privacy-focused**: [Ollama](https://ollama.ai/), [Jan](https://jan.ai/), [Docker Model Runner](https://www.docker.com/blog/introducing-docker-model-runner/), [LM Studio](https://lmstudio.ai/) etc. (local AI)
   - **Convenience-focused**: [Claude](https://claude.ai/), [ChatGPT](https://chatgpt.com/), [Gemini](https://gemini.google.com/), [Perplexity](https://www.perplexity.ai/) etc. (cloud AI)
 <br>
 ※ The claim that recipes can run on consumer GPUs seems to be hallucination.
@@ -1032,9 +1032,9 @@ Forks of this project are welcome!
 
 ## 👥 Community
 
-- **GitHub Discussions**: [Questions & Discussion](https://github.com/HarmoniaEpic/text-to-office-recipes/discussions)
-- **Issues**: [Bug Reports & Feature Requests](https://github.com/HarmoniaEpic/text-to-office-recipes/issues)
-- **Wiki**: [Detailed Documentation](https://github.com/HarmoniaEpic/text-to-office-recipes/wiki)
+- **GitHub Discussions**: [Questions & Discussion](https://github.com/HarmoniaEpic/text-to-office-recipes_en/discussions)
+- **Issues**: [Bug Reports & Feature Requests](https://github.com/HarmoniaEpic/text-to-office-recipes_en/issues)
+- **Wiki**: [Detailed Documentation](https://github.com/HarmoniaEpic/text-to-office-recipes_en/wiki)
 
 ---
 
