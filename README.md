@@ -34,7 +34,7 @@ We plan to make careful corrections with human review once the operation stabili
 - Generation of mathematical formula PNG images (TeX-style mathematical formulas using matplotlib)
 ### Browser Sandbox + WASM (using AssemblyScript)
 - Generation of WASM-optimized standalone HTML web apps
-## About local execution of recipes
+## ⚠️About local execution of recipes⚠️
 Contrary to the description in AI-generated text, when actually tested, recipes consistently failed to execute on models running on video cards with 16GB VRAM. It seems that model size is an important limiting factor in addition to context window length.
 <br><br>
 We're considering verifying this on Colab etc. in the future. It might take time, but inferencing heavyweight models on CPU might also work. Other possibilities include Apple Silicon Macs.
