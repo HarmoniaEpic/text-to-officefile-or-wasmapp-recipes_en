@@ -192,9 +192,9 @@ Office-type document files & WASM-compatible standalone HTML web app generation 
 ![assemblyscript-image-filter-processor.jpeg](examples/assemblyscript-image-filter-processor.jpeg)
 
 #### "Create a knockoff of Pong, based on the attached recipe and template."
-[Generated game HTML file](examples/pongu-championship.html)
+[Generated game HTML file](examples/assemblyscript-vector-ping.html)
 <BR><BR>
-![pongu-championship](examples/pongu-championship.jpeg)
+![vector-ping](examples/assemblyscript-vector-ping.jpeg)
 ##### Prompt Details
 ```
 Please create a Pong clone that meets the following requirements:
