@@ -1,6 +1,6 @@
 # Preface
-## 👉Download Here👈
-**[👉Download ZIP file👈](https://github.com/HarmoniaEpic/text-to-officefile-or-wasmapp-recipes_en/archive/refs/heads/main.zip)**
+## [👉Download Here👈](https://github.com/HarmoniaEpic/text-to-officefile-or-wasmapp-recipes_en/archive/refs/heads/main.zip)
+## 日本語版はこちら👉[text-to-officefile-or-wasmapp-recipes(Japanese)](https://github.com/HarmoniaEpic/text-to-officefile-or-wasmapp-recipes/)
 ## Please stop! I'm bored!
 [Dear Miss Sweetie Poo](https://en.wikipedia.org/wiki/Ig_Nobel_Prize#Ceremony), please accept this. [I beg you, please give me more time and money](https://en.wikipedia.org/wiki/Montana_Jones#Dr._Nitro) in consideration of the gift below.
 <br><br>
@@ -9,7 +9,6 @@
 Attach the above file to the AI chat and provide instructions such as: “Please create a webpage that generates a WASM program listing prime numbers within the integers 0 to 100, based on the attached recipe.” You will then receive an HTML file or its code, such as the following:
 <br>
 [prime_numbers_wasm.html](examples/prime_numbers_wasm.html)
-## 日本語版はこちら👉[text-to-officefile-or-wasmapp-recipes(Japanese)](https://github.com/HarmoniaEpic/text-to-officefile-or-wasmapp-recipes/)
 ## 💣Caution! This product is still PoC!💣
 ## 🚽Please flush away any complaints as this is a proof of concept🚽
 ## What is this?
