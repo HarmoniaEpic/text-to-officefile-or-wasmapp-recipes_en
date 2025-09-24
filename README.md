@@ -197,7 +197,7 @@ Office-type document files & WASM-compatible standalone HTML web app generation 
 ![vector-ping](examples/assemblyscript-vector-ping.png)
 ##### Prompt Details
 ```
-Please create a Pong clone that meets the following requirements:
+Please create a Pong clone that meets the following requirements, based on the attached recipe and template:
 - WASM-based game engine based on the attached recipe
 - Game title with a knockoff feel inspired by Pong
 - Single user mode
