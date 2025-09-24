@@ -1,6 +1,6 @@
 # Preface
 ## [👉Download Here👈](https://github.com/HarmoniaEpic/text-to-officefile-or-wasmapp-recipes_en/archive/refs/heads/main.zip)
-## 日本語版はこちら👉[text-to-officefile-or-wasmapp-recipes(Japanese)](https://github.com/HarmoniaEpic/text-to-officefile-or-wasmapp-recipes/)
+## 👉日本語版はこちら👉[text-to-officefile-or-wasmapp-recipes(Japanese)](https://github.com/HarmoniaEpic/text-to-officefile-or-wasmapp-recipes/)
 ## Please stop! I'm bored!
 [Dear Miss Sweetie Poo](https://en.wikipedia.org/wiki/Ig_Nobel_Prize#Ceremony), please accept this. [I beg you, please give me more time and money](https://en.wikipedia.org/wiki/Montana_Jones#Dr._Nitro) in consideration of the gift below.
 <br><br>
