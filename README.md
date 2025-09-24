@@ -181,20 +181,20 @@ Office-type document files & WASM-compatible standalone HTML web app generation 
 #### "Create a Counter Demo, based on the attached recipe and template."
 [Generated counter demo HTML file](examples/assemblyscript-counter-demo.html)
 <BR><BR>
-![assemblyscript-counter-demo](examples/assemblyscript-counter-demo.jpeg)
+![assemblyscript-counter-demo](examples/assemblyscript-counter-demo.png)
 #### "Create a Ball Physics Demo, based on the attached recipe and template."
 [Generated ball physics demo HTML file](examples/assemblyscript-ball-physics-demo.html)
 <BR><BR>
-![assemblyscript-ball-physics-demo](examples/assemblyscript-ball-physics-demo.jpeg)
+![assemblyscript-ball-physics-demo](examples/assemblyscript-ball-physics-demo.png)
 #### "Create an Image Filter Processor, based on the attached recipe and template."
 [Generated image filter demo HTML file](examples/assemblyscript-image-filter-processor.html)
 <BR><BR>
-![assemblyscript-image-filter-processor.jpeg](examples/assemblyscript-image-filter-processor.jpeg)
+![assemblyscript-image-filter-processor](examples/assemblyscript-image-filter-processor.png)
 
 #### "Create a knockoff of Pong, based on the attached recipe and template."
 [Generated game HTML file](examples/assemblyscript-vector-ping.html)
 <BR><BR>
-![vector-ping](examples/assemblyscript-vector-ping.jpeg)
+![vector-ping](examples/assemblyscript-vector-ping.png)
 ##### Prompt Details
 ```
 Please create a Pong clone that meets the following requirements:
