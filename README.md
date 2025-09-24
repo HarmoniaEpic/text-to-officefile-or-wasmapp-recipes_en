@@ -650,7 +650,7 @@ This system has different security and privacy levels depending on the AI used.
 |-----|------|------------------|
 | **[Ollama](https://ollama.ai/)** | LLM operation platform running locally | ⭐⭐⭐⭐⭐ Advanced protection |
 | **[Jan](https://jan.ai/)** | Offline-compatible LLM operation platform | ⭐⭐⭐⭐⭐ Advanced protection |
-| **[Docker Model Runner](https://www.docker.com/ja-jp/blog/introducing-docker-model-runner/)** | Containerized LLM operation platform | ⭐⭐⭐⭐⭐ Advanced protection |
+| **[Docker Model Runner](https://www.docker.com/blog/introducing-docker-model-runner/)** | Containerized LLM operation platform | ⭐⭐⭐⭐⭐ Advanced protection |
 
 **Advantages:**
 - ✅ **Offline operation** - No internet connection required after model download
