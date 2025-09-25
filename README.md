@@ -192,7 +192,7 @@ Office-type document files & WASM-compatible standalone HTML web app generation 
 <BR><BR>
 ![assemblyscript-image-filter-processor](examples/assemblyscript-image-filter-processor.png)
 
-#### "Create a knockoff of Pong, based on the attached recipe and template."
+#### "Create a poor man’s Pong, based on the attached recipe and template."
 [Generated game HTML file](examples/assemblyscript-vector-ping.html)
 <BR><BR>
 ![vector-ping](examples/assemblyscript-vector-ping.png)
