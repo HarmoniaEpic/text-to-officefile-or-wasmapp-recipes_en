@@ -200,7 +200,7 @@ Office-type document files & WASM-compatible standalone HTML web app generation 
 ```
 Please create a Pong clone that meets the following requirements, based on the attached recipe and template:
 - WASM-based game engine based on the attached recipe
-- Game title with a knockoff feel inspired by Pong
+- Game title with a fake feel inspired by Pong
 - Single user mode
 - 2-user battle mode
 - Compatible with keyboard and joystick
@@ -451,7 +451,7 @@ With transparent background and blue text color.
 
 Please create a Pong clone that meets the following requirements:
 - WASM-based game engine based on attached recipes
-- Game title with a knockoff feel inspired by Pong
+- Game title with a fake feel inspired by Pong
 - Single user mode
 - 2-user battle mode
 - Keyboard and joystick support
