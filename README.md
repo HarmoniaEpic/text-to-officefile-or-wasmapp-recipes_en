@@ -102,7 +102,7 @@ The above three points are its characteristics. Functions that cannot be realize
 [![Version](https://img.shields.io/badge/Version-1.2.1-blue.svg)](https://github.com/HarmoniaEpic/text-to-office-recipes)
 [![Python](https://img.shields.io/badge/Python-3.x-green.svg)](https://www.python.org/)
 [![Pyodide](https://img.shields.io/badge/Powered%20by-Pyodide-orange.svg)](https://pyodide.org/)
-[![AssemblyScript](https://img.shields.io/badge/Powered%20by-AssemblyScript-pink.svg)](https://www.assemblyscript.org/)
+[![AssemblyScript](https://img.shields.io/badge/Powered%20by-AssemblyScript-red.svg)](https://www.assemblyscript.org/)
 
 **With AI and recipe files, you can easily auto-generate PowerPoint, Word, Excel, PDF, Math PNG, and WASM-optimized web apps**
 
